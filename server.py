@@ -112,12 +112,12 @@ class TestHandler(BaseHTTPRequestHandler):
 
 def run(port=None, server_class=HTTPServer, handler_class=TestHandler):
     port = port or 8000
-    server_address = ('127.0.0.1', port)
+    server_address = ('', port)
     try:
         httpd = server_class(server_address, handler_class)
     except:
         port = int(''.join(random.sample(str(port), 4)))
-        server_address = ('127.0.0.1', port)
+        server_address = ('', port)
         httpd = server_class(server_address, handler_class)
 
     return httpd, port
