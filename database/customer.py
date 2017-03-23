@@ -96,24 +96,42 @@ def _run(database=None):
     metadata.create_all(tables=tables)
 
 
+def _get_customers():
+    return db_.query(Customer).all()
+
+
 def test_():
-    users = db_.query(Customer).all()
+    users = _get_customers()
     if not users:
-#         engine.execute("""INSERT INTO customers (age, first_name, last_name,
-#                        pass_phrase, active, password)
-# VALUES (20,  'Tonye', 'Jack', 'Test phrase', :status, 'abc123')""", {'status': True})
-#         db_.begin()
-        user = Customer()
-        user.first_name = 'Tonye'
-        user.last_name = 'Jack'
-        user.pass_phrase = 'Test Phrase'
-        user.active = True
-        user.password = 'abe123'
+        engine.execute("""INSERT INTO customers
+                  (age, first_name, last_name, pass_phrase, active, password)
+            VALUES
+                  (20,  'Tonye', 'Jack', 'Test phrase', :status, :password)""",
+                       {'status': True,
+                        'password': sha256_crypt.hash('abc1234')})
 
-        db_.add(user)
+        users = _get_customers()
+        if users:
+            user = users[0]
+            print('Password: {}'.format(user.password))
 
-        db_.flush()
-    print([user for user in db_.query(Customer).all()])
+            if user.validate_password('abc1234'):
+                print('Valid')
+            else:
+                print('Invalid')
+
+
+    #     user = Customer()
+    #     user.first_name = 'Tonye'
+    #     user.last_name = 'Jack'
+    #     user.pass_phrase = 'Test Phrase'
+    #     user.active = True
+    #     user.password = 'abe123'
+    #
+    #     db_.add(user)
+    #
+    #     db_.flush()
+    # print([user for user in db_.query(Customer).all()])
 
 _run(db)
 test_()
