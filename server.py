@@ -1,4 +1,4 @@
-from __future__ import print_function
+from __future__ import print_function, unicode_literals
 
 import inspect
 import random
@@ -11,11 +11,13 @@ import argparse
 if (3, 0) > sys.version_info > (2, 0):
     from SimpleHTTPServer import SimpleHTTPRequestHandler
     from SocketServer import TCPServer as HTTPServer
+    import urlparse
 else:
     """Using python 3"""
     from http.server import SimpleHTTPRequestHandler, HTTPServer
+    from urllib import parse as urlparse
 
-BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+BASE_DIR = os.getcwd()
 
 
 # This class will handles any incoming request from
@@ -79,15 +81,9 @@ class TestHandler(SimpleHTTPRequestHandler):
         contentType = self._content_type(self.path)
 
         try:
-            # Get the requested element
-            # full_path = str(Path(os.getcwd()).parent) + "\index.html"
-            full_path = BASE_DIR + self.path  # It doesn't exist
-            print(BASE_DIR)
-            print(full_path)
-            print(self.path)
+            full_path = BASE_DIR + self.path
             if not os.path.exists(full_path):
                 raise Exception("'{0}' not found".format(full_path))
-
             # file exist
             elif os.path.isfile(full_path):
                 self.handle_file(full_path, contentType)
@@ -98,7 +94,15 @@ class TestHandler(SimpleHTTPRequestHandler):
 
     def do_POST(self):
         contentType = self._content_type(self.path)
-        full_path = BASE_DIR + '/purchase/buy.html'
+        content_len = int(self.headers.getheader('content-length', 0))
+        post_body = self.rfile.read(content_len)
+
+        if post_body:
+            values = urlparse.parse_qs(post_body)
+            email = values.get('email')[0]
+            name = values.get('name')[0]
+
+        full_path = os.path.abspath(os.path.join(BASE_DIR, self.path))
         self.handle_file(full_path, contentType)
 
     def do_HEAD(self):
