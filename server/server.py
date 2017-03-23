@@ -7,7 +7,7 @@ import sys
 if sys.version_info <= (2, 7):
     import SimpleHTTPServer as HTTPServer
     from SimpleHTTPServer import SimpleHTTPRequestHandler as BaseHTTPRequestHandler
-else:
+elif sys.version_info > (2, 7):
     """Using python 3"""
     from http.server import BaseHTTPRequestHandler, HTTPServer
 
@@ -129,52 +129,59 @@ def run_server(port_number):
         raise
 
 
-def start():
-    print('*' * 30)
-    print("\nWelcome to your Python Based Web Server\n")
-    print("-" * 30)
-    print("\nThis is a Locally Hosted Server\n")
-    print("-" * 30)
-    while True:
-        if not len(sys.argv) > 1:
-            try:
-                user = str(input("Press S to Start >").lower())
-                if user == 's':
-                    port_number = int(
-                        input("\nSelect the port you want the Server >"))
-                    if len(str(port_number)) != 4 or port_number == 8080:
-                        print("Port Has to be 4 numbers other than 8080")
-                        continue
-                    elif len(str(port_number)) == 4 and port_number != 8080:
-                        run_server(port_number)
-                        return None
-                    elif user != 's':
-                        print("Sorry Not a Valid Choice !!!")
-                        continue
-            except ValueError:
-                print("Sorry that's not a port value")
-                continue
-            except KeyboardInterrupt:
-                break
-        # elif '--reload' in sys.argv or '-r' in sys.argv:
-        #
-        else:
-            try:
-                port = [arg for arg in sys.argv if '-p' in arg or '--port' in arg]
-                if port and len(port) == 1:
-                    port_number = int(str(port[0]).split('=')[1])
-                elif sys.argv[1:2]:
-                    port_number = int(sys.argv[1:2][0])
-                else:
-                    raise Exception('Port number must be prefixed with '
-                                    '-p= or --port=')
-                run_server(port_number)
-                return None
-            except ValueError:
-                print("Sorry that's not a port value")
-                continue
-            except KeyboardInterrupt:
-                break
+def start(port_number=None):
+    if port_number:
+        try:
+            port_number = int(port_number)
+            run_server(port_number)
+        except ValueError:
+            raise
+    else:
+        print('*' * 30)
+        print("\nWelcome to your Python Based Web Server\n")
+        print("-" * 30)
+        print("\nThis is a Locally Hosted Server\n")
+        print("-" * 30)
+        while True:
+            if not len(sys.argv) > 1:
+                try:
+                    user = str(input("Press S to Start >").lower())
+                    if user == 's':
+                        port_number = int(
+                            input("\nSelect the port you want the Server >"))
+                        if len(str(port_number)) != 4 or port_number == 8080:
+                            print("Port Has to be 4 numbers other than 8080")
+                            continue
+                        elif len(str(port_number)) == 4 and port_number != 8080:
+                            run_server(port_number)
+                            return None
+                        elif user != 's':
+                            print("Sorry Not a Valid Choice !!!")
+                            continue
+                except ValueError:
+                    print("Sorry that's not a port value")
+                    continue
+                except KeyboardInterrupt:
+                    break
+            # elif '--reload' in sys.argv or '-r' in sys.argv:
+            #
+            else:
+                try:
+                    port = [arg for arg in sys.argv if '-p' in arg or '--port' in arg]
+                    if port and len(port) == 1:
+                        port_number = int(str(port[0]).split('=')[1])
+                    elif sys.argv[1:2]:
+                        port_number = int(sys.argv[1:2][0])
+                    else:
+                        raise Exception('Port number must be prefixed with '
+                                        '-p= or --port=')
+                    run_server(port_number)
+                    return None
+                except ValueError:
+                    print("Sorry that's not a port value")
+                    continue
+                except KeyboardInterrupt:
+                    break
 
 if __name__ == "__main__":
     start()
