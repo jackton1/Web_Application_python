@@ -8,15 +8,12 @@ import webbrowser
 import sys
 import argparse
 
-if (3, 0) > sys.version_info > (2, 6):
-    import SimpleHTTPServer
-    import SocketServer
-
-    BaseHTTPRequestHandler = SimpleHTTPServer.SimpleHTTPRequestHandler
-    HTTPServer = SocketServer.TCPServer
+if (3, 0) > sys.version_info > (2, 0):
+    from SimpleHTTPServer import SimpleHTTPRequestHandler
+    from SocketServer import TCPServer as HTTPServer
 else:
     """Using python 3"""
-    from http.server import BaseHTTPRequestHandler, HTTPServer
+    from http.server import SimpleHTTPRequestHandler, HTTPServer
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 
@@ -25,7 +22,7 @@ BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 # the browser
 
 
-class TestHandler(BaseHTTPRequestHandler):
+class TestHandler(SimpleHTTPRequestHandler):
     Error_Page = """\
        <html>
         <body>
@@ -135,7 +132,6 @@ def run_server(port_number):
     except KeyboardInterrupt:
         print('^C received, shutting down the web server')
         httpd.socket.close()
-        raise
 
 
 def start(port_number=None):
@@ -169,7 +165,6 @@ def start(port_number=None):
             return None
         except ValueError:
             print("Sorry that's not a port value")
-            raise
 
 if __name__ == "__main__":
     start()
