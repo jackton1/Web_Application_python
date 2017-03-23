@@ -1,7 +1,8 @@
-from selenium import webdriver
 from unittest import TestCase
-from server import server
-import sys
+
+from selenium import webdriver
+
+import server
 
 
 class TestPages(TestCase):

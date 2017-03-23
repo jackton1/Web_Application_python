@@ -1,13 +1,19 @@
 from __future__ import print_function
 
+import inspect
+
 import os
 import webbrowser
 import sys
+import argparse
 
-if sys.version_info <= (2, 7):
-    import SimpleHTTPServer as HTTPServer
-    from SimpleHTTPServer import SimpleHTTPRequestHandler as BaseHTTPRequestHandler
-elif sys.version_info > (2, 7):
+if (3, 0) > sys.version_info > (2, 6):
+    import SimpleHTTPServer
+    import SocketServer
+
+    BaseHTTPRequestHandler = SimpleHTTPServer.SimpleHTTPRequestHandler
+    HTTPServer = SocketServer.TCPServer
+else:
     """Using python 3"""
     from http.server import BaseHTTPRequestHandler, HTTPServer
 
@@ -27,9 +33,6 @@ class TestHandler(BaseHTTPRequestHandler):
         <body>
        </html>
      """
-
-    def __init__(self, request, client_address, server, *args, **kwargs):
-        super(TestHandler, self).__init__(request, client_address, server)
 
     def handle_file(self, full_path, contentType):
         try:
@@ -142,46 +145,25 @@ def start(port_number=None):
         print("-" * 30)
         print("\nThis is a Locally Hosted Server\n")
         print("-" * 30)
-        while True:
-            if not len(sys.argv) > 1:
-                try:
-                    user = str(input("Press S to Start >").lower())
-                    if user == 's':
-                        port_number = int(
-                            input("\nSelect the port you want the Server >"))
-                        if len(str(port_number)) != 4 or port_number == 8080:
-                            print("Port Has to be 4 numbers other than 8080")
-                            continue
-                        elif len(str(port_number)) == 4 and port_number != 8080:
-                            run_server(port_number)
-                            return None
-                        elif user != 's':
-                            print("Sorry Not a Valid Choice !!!")
-                            continue
-                except ValueError:
-                    print("Sorry that's not a port value")
-                    continue
-                except KeyboardInterrupt:
-                    break
-            # elif '--reload' in sys.argv or '-r' in sys.argv:
-            #
+        if not len(sys.argv) > 1:
+            sys.argv.extend(['--port=8050'])
+            # parser = argparse.ArgumentParser(description='port')
+            # parser.add_argument('-p=8030', type=str,)
+            # parser.parse_args()
+        try:
+            port = [arg for arg in sys.argv if '-p' in arg or '--port' in arg]
+            if port and len(port) == 1:
+                port_number = int(str(port[0]).split('=')[1])
+            elif sys.argv[1:2]:
+                port_number = int(sys.argv[1:2][0])
             else:
-                try:
-                    port = [arg for arg in sys.argv if '-p' in arg or '--port' in arg]
-                    if port and len(port) == 1:
-                        port_number = int(str(port[0]).split('=')[1])
-                    elif sys.argv[1:2]:
-                        port_number = int(sys.argv[1:2][0])
-                    else:
-                        raise Exception('Port number must be prefixed with '
-                                        '-p= or --port=')
-                    run_server(port_number)
-                    return None
-                except ValueError:
-                    print("Sorry that's not a port value")
-                    continue
-                except KeyboardInterrupt:
-                    break
+                raise Exception('Port number must be prefixed with '
+                                '-p= or --port=')
+            run_server(port_number)
+            return None
+        except ValueError:
+            print("Sorry that's not a port value")
+            raise
 
 if __name__ == "__main__":
     start()
