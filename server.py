@@ -129,7 +129,7 @@ def run_server(port_number):
         # Create a web server and define the handler to manage the
         # incoming request
         print('Started httpserver on port ', port_number)
-        webbrowser.open('http://127.0.0.1:{}'.format(port_number))
+        # webbrowser.open('http://127.0.0.1:{}'.format(port_number))
         # Wait forever for incoming http requests
         httpd.serve_forever()
     except KeyboardInterrupt:
