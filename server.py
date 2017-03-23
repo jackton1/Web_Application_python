@@ -34,10 +34,13 @@ class TestHandler(SimpleHTTPRequestHandler):
        </html>
      """
 
-    def handle_file(self, full_path, contentType):
+    def handle_file(self, full_path, contentType, value=None, file_name=None):
         try:
             with open(full_path, 'rb') as reader:
                 content = reader.read()
+                if value and file_name:
+                    if file_name in full_path:
+                        content %= value
             self.send_content(content, contentType)
         except IOError as msg:
             msg = "'{}' cannot be read: {}".format(full_path, msg)
@@ -81,7 +84,7 @@ class TestHandler(SimpleHTTPRequestHandler):
         contentType = self._content_type(self.path)
 
         try:
-            full_path = BASE_DIR + self.path
+            full_path = os.path.abspath(os.curdir + self.path)
             if not os.path.exists(full_path):
                 raise Exception("'{0}' not found".format(full_path))
             # file exist
@@ -93,17 +96,22 @@ class TestHandler(SimpleHTTPRequestHandler):
             self.handle_error(msg, contentType)  # Handler for the POST requests
 
     def do_POST(self):
+        value = None
         contentType = self._content_type(self.path)
         content_len = int(self.headers.getheader('content-length', 0))
         post_body = self.rfile.read(content_len)
 
         if post_body:
             values = urlparse.parse_qs(post_body)
-            email = values.get('email')[0]
-            name = values.get('name')[0]
+            if values:
+                email = values.pop('email', [''])[0]
+                name = values.pop('name', [''])[0]
+                if email or name:
+                    value = name, email
 
-        full_path = os.path.abspath(os.path.join(BASE_DIR, self.path))
-        self.handle_file(full_path, contentType)
+        full_path = os.path.abspath(os.curdir + self.path)
+        self.handle_file(full_path, contentType, value=value,
+                         file_name=self.path)
 
     def do_HEAD(self):
         self.send_response(200)
