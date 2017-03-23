@@ -1,4 +1,3 @@
 selenium
 http
 pathlib
-urlparse
