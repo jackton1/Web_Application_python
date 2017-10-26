@@ -1,2 +1,2 @@
-web: python -m http.server $PORT 
+web: python -m SimpleHTTPServer $PORT 
 worker: python server.py
