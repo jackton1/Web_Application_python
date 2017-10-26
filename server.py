@@ -160,7 +160,7 @@ def start(port_number=None):
         print("\nThis is a Locally Hosted Server\n")
         print("-" * 30)
         port = port_number or os.environ.get('PORT')
-        run_server(port_number)
+        run_server(port)
 #         if not len(sys.argv) > 1:
 #             sys.argv.extend(['--port=8050'])
 #             # parser = argparse.ArgumentParser(description='port')
