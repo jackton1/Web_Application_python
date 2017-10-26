@@ -122,7 +122,7 @@ class TestHandler(SimpleHTTPRequestHandler):
 
 def run(port=None, server_class=HTTPServer, handler_class=TestHandler):
     port = port or 8000
-    server_address = (os.environ.get('HOST'), port)
+    server_address = (os.environ.get('HOST', ''), port)
     print(repr(server_address))
     try:
         httpd = server_class(server_address, handler_class)
