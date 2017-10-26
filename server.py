@@ -148,37 +148,15 @@ def run_server(port_number):
         httpd.socket.close()
 
 
-def start(port_number=None):
-    if port_number:
-        try:
-            port_number = int(port_number)
-            run_server(port_number)
-        except ValueError:
-            raise
-    else:
-        print('*' * 30)
-        print("\nWelcome to your Python Based Web Server\n")
-        print("-" * 30)
-        print("\nThis is a Locally Hosted Server\n")
-        print("-" * 30)
-        port = port_number or os.environ.get('PORT')
-        run_server(port)
-#         if not len(sys.argv) > 1:
-#             sys.argv.extend(['--port=8050'])
-#             # parser = argparse.ArgumentParser(description='port')
-#             # parser.add_argument('-p=8030', type=str,)
-#             # parser.parse_args()
-#         try:
-#             port = [arg for arg in sys.argv if '-p' in arg or '--port' in arg]
-#             if port and len(port) == 1:
-#                 port_number = int(str(port[0]).split('=')[1])
-#             elif sys.argv[1:2]:
-#                 port_number = int(sys.argv[1:2][0])
-#             else:
-#                 raise Exception('Port number must be prefixed with '
-#                                 '-p= or --port=')
-#             return None
-#         except ValueError:
-#             print("Sorry that's not a port value")
+def start(args=None):
+    print('*' * 30)
+    print("\nWelcome to your Python Based Web Server\n")
+    print("-" * 30)
+    print("\nRunning Server\n")
+    print("-" * 30)
+    parser = argparse.ArgumentParser(description='Run simple http server at port')
+    parser.add_argument('-p', '--port', type=int, default=os.environ.get('PORT', 8000))
+    args = parser.parse_args(args)
+    run_server(args.port)
 
 start()
