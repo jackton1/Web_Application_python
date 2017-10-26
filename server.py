@@ -159,24 +159,25 @@ def start(port_number=None):
         print("-" * 30)
         print("\nThis is a Locally Hosted Server\n")
         print("-" * 30)
-        if not len(sys.argv) > 1:
-            sys.argv.extend(['--port=8050'])
-            # parser = argparse.ArgumentParser(description='port')
-            # parser.add_argument('-p=8030', type=str,)
-            # parser.parse_args()
-        try:
-            port = [arg for arg in sys.argv if '-p' in arg or '--port' in arg]
-            if port and len(port) == 1:
-                port_number = int(str(port[0]).split('=')[1])
-            elif sys.argv[1:2]:
-                port_number = int(sys.argv[1:2][0])
-            else:
-                raise Exception('Port number must be prefixed with '
-                                '-p= or --port=')
-            run_server(port_number)
-            return None
-        except ValueError:
-            print("Sorry that's not a port value")
+        port = port_number or os.environ.get('PORT')
+        run_server(port_number)
+#         if not len(sys.argv) > 1:
+#             sys.argv.extend(['--port=8050'])
+#             # parser = argparse.ArgumentParser(description='port')
+#             # parser.add_argument('-p=8030', type=str,)
+#             # parser.parse_args()
+#         try:
+#             port = [arg for arg in sys.argv if '-p' in arg or '--port' in arg]
+#             if port and len(port) == 1:
+#                 port_number = int(str(port[0]).split('=')[1])
+#             elif sys.argv[1:2]:
+#                 port_number = int(sys.argv[1:2][0])
+#             else:
+#                 raise Exception('Port number must be prefixed with '
+#                                 '-p= or --port=')
+#             return None
+#         except ValueError:
+#             print("Sorry that's not a port value")
 
 if __name__ == "__main__":
     start()
