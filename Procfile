@@ -1,1 +1,2 @@
-web: (python -m http.server $PORT &) && (python server.py)
+web: python -m http.server "$PORT"
+worker: python server.py
