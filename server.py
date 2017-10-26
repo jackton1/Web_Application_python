@@ -78,6 +78,7 @@ class TestHandler(SimpleHTTPRequestHandler):
 
     # Handler for the GET requests
     def do_GET(self):
+        print('Running and requested ' + self.path)
         if self.path == '/':
             self.path += 'index.html'
 
@@ -122,6 +123,7 @@ class TestHandler(SimpleHTTPRequestHandler):
 def run(port=None, server_class=HTTPServer, handler_class=TestHandler):
     port = port or 8000
     server_address = (str(os.environ.get('HOST')), port)
+    print(repr(server_address))
     try:
         httpd = server_class(server_address, handler_class)
     except:
