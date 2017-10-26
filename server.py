@@ -179,5 +179,4 @@ def start(port_number=None):
 #         except ValueError:
 #             print("Sorry that's not a port value")
 
-if __name__ == "__main__":
-    start()
+start()
