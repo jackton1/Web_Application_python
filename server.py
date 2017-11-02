@@ -17,8 +17,6 @@ else:
     from http.server import SimpleHTTPRequestHandler, HTTPServer
     from urllib import parse as urlparse
 
-BASE_DIR = os.getcwd()
-
 
 # This class will handles any incoming request from
 # the browser
